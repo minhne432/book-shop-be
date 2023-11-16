@@ -1,5 +1,6 @@
 const Paginator = require("./paginator");
 const knex = require("../database/knex");
+
 function makeContactsService() {
   function readContact(payload) {
     const contact = {
@@ -16,6 +17,25 @@ function makeContactsService() {
   async function createContact(payload) {
     const contact = readContact(payload);
     const [id] = await knex("contacts").insert(contact);
+    return { id, ...contact };
+  }
+
+  async function createUser(payload) {
+    const { username } = readContact(payload);
+
+    // Kiểm tra xem username đã tồn tại trong cơ sở dữ liệu hay không
+    const existingUser = await knex("user_accounts")
+      .where({ username })
+      .first();
+
+    // Nếu đã tồn tại, trả về thông báo lỗi
+    if (existingUser) {
+      return;
+    }
+
+    // Nếu không tồn tại, thêm người dùng mới vào cơ sở dữ liệu
+    const contact = readContact(payload);
+    const [id] = await knex("user_accounts").insert(contact);
     return { id, ...contact };
   }
 
@@ -78,6 +98,7 @@ function makeContactsService() {
     updateContact,
     deleteContact,
     deleteAllContacts,
+    createUser,
   };
 }
 module.exports = makeContactsService;

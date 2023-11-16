@@ -1,22 +1,24 @@
 const makeContactsService = require("../services/users.service");
 const ApiError = require("../api-error");
+const jwt = require("../common/_JVT");
 
-async function createUser(req, res, next) {
-  if (!req.body?.name) {
+async function register(req, res, next) {
+  if (!req.body?.username) {
     return next(new ApiError(400, "Name can not be empty"));
   }
   try {
     const contactService = makeContactsService();
-    const contact = await contactService.createContact(req.body);
+    const contact = await contactService.createUser(req.body);
+    if (!contact) {
+      return next(new ApiError(409, "User name is used!"));
+    }
     return res.send(contact);
   } catch (error) {
-    console.console.log(error);
     return next(
       new ApiError(500, "An error orrcured while creating the contact")
     );
   }
 }
-
 async function getUsersByFilter(req, res, next) {
   let contacts = [];
   try {
@@ -38,11 +40,25 @@ async function login(req, res, next) {
       req.body.username,
       req.body.password
     );
-    console.log(contacts);
+
     if (contacts.length === 0) {
       return next(new ApiError(404, "Khong tim thay thong tin account!"));
     }
-    return res.send(contacts);
+
+    const user_details = {
+      user_id: contacts[0].user_id,
+      username: contacts[0].username,
+      email: contacts[0].email,
+    };
+    const _token = await jwt.make(user_details);
+    const responseData = {
+      user_id: contacts[0].user_id,
+      username: contacts[0].username,
+      email: contacts[0].email,
+      token: _token,
+    };
+
+    return res.send({ responseData });
   } catch (err) {
     console.log(err);
     return next(
@@ -118,11 +134,11 @@ async function deleteAllUsers(req, res, next) {
 }
 
 module.exports = {
-  createUser,
   getUsersByFilter,
   getUser,
   updateUsers,
   deleteUser,
   deleteAllUsers,
   login,
+  register,
 };

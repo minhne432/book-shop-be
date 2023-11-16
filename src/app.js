@@ -16,19 +16,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/token", async (req, res) => {
-  var user = {
-    name: "Admin",
-    emal: "Admin@gmail.com",
-  };
-  const _token = await jwt.make(user);
-  res.send({ token: _token });
-});
-
 app.get("/checktoken", async (req, res) => {
   try {
     var _token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQWRtaW4iLCJlbWFsIjoiQWRtaW5AZ21haWwuY29tIiwiaWF0IjoxNjk5ODU0NTYwLCJleHAiOjE2OTk4NTgxNjB9.SDkNPQ96LfNN5siq7heDsJR3smAH8fpj_QqPOvaRxHk";
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJpYXQiOjE3MDAxMDI1NjUsImV4cCI6MTcwMDEwNjE2NX0.Tau2eK0VOk761vvrmigZ_VFIsxANLqMLwrEzKBsMF2U";
     const data = await jwt.check(_token);
     res.send({ data: data });
   } catch (err) {
