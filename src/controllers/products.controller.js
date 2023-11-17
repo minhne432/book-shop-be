@@ -1,16 +1,18 @@
-const makeContactsService = require("../services/products.service");
+const makeProductsService = require("../services/products.service");
 const ApiError = require("../api-error");
+const cloudinary = require("cloudinary").v2;
 
 async function createProduct(req, res, next) {
   if (!req.body?.name) {
+    cloudinary.uploader.destroy(req.file.filename);
     return next(new ApiError(400, "Name can not be empty"));
   }
   try {
-    const contactService = makeContactsService();
-    const contact = await contactService.createContact(req.body);
-    return res.send(contact);
+    const productsService = makeProductsService();
+    const product = await productsService.createProduct(req.body, req.file);
+    return res.send(product);
   } catch (error) {
-    console.console.log(error);
+    cloudinary.uploader.destroy(req.file.filename);
     return next(
       new ApiError(500, "An error orrcured while creating the contact")
     );
@@ -20,8 +22,8 @@ async function createProduct(req, res, next) {
 async function getProductsByFilter(req, res, next) {
   let contacts = [];
   try {
-    const contactsService = makeContactsService();
-    contacts = await contactsService.getManyContacts(req.query);
+    const contactsService = makeProductsService();
+    contacts = await contactsService.getManyProducts(req.query);
   } catch (error) {
     console.log(error);
     return next(
@@ -33,7 +35,7 @@ async function getProductsByFilter(req, res, next) {
 
 async function getProduct(req, res, next) {
   try {
-    const contactsService = makeContactsService();
+    const contactsService = makeProductsService();
     const contact = await contactsService.getContactById(req.params.id);
     if (!contact) {
       return next(new ApiError(404, "Contact not found"));
@@ -49,50 +51,40 @@ async function getProduct(req, res, next) {
 
 async function updateProduct(req, res, next) {
   if (Object.keys(req.body).length === 0) {
+    if (req.file != undefined) cloudinary.uploader.destroy(req.file.filename);
     return next(new ApiError(400, "Data to update can not be empty"));
   }
   try {
-    const contactService = makeContactsService();
-    const update = await contactService.updateContact(req.params.id, req.body);
+    const productsService = makeProductsService();
+    const update = await productsService.updateProduct(
+      req.params.id,
+      req.body,
+      req.file
+    );
     if (!update) {
-      return next(new ApiError(404, "contact not found!"));
+      return next(new ApiError(404, "product not found!"));
     }
-    return res.send({ message: "contact was update successfully!" });
+    return res.send({ message: "product was update successfully!" });
   } catch (error) {
-    console.log(error);
+    if (req.file != undefined) cloudinary.uploader.destroy(req.file.filename);
     return next(
-      new ApiError(500, `error updating contact with id=${req.params.id}`)
+      new ApiError(500, `error updating product with id=${req.params.id}`)
     );
   }
 }
 
 function deleteProduct(req, res, next) {
   try {
-    const contactService = makeContactsService();
-    const Delete = contactService.deleteContact(req.params.id);
+    const productstService = makeProductsService();
+    const Delete = productstService.deleteProduct(req.params.id);
     if (!Delete) {
-      return next(new ApiError(404, "contact not found!"));
+      return next(new ApiError(404, "product not found!"));
     }
-    return res.send({ messate: "Contact was delete successfully!" });
+    return res.send({ messate: "product was delete successfully!" });
   } catch (error) {
     console.log(error);
     return next(
-      new ApiError(500, `could not delete contact with id=${req.params.id}`)
-    );
-  }
-}
-
-async function deleteAllProducts(req, res, next) {
-  try {
-    const contactService = makeContactsService();
-    const deleted = await contactService.deleteAllContacts();
-    return res.send({
-      message: `${deleted} contacts were deleted successfully!`,
-    });
-  } catch (error) {
-    console.log(error);
-    return next(
-      new ApiError(500, "An error occured while removing all contacts")
+      new ApiError(500, `could not delete product with id=${req.params.id}`)
     );
   }
 }
@@ -103,5 +95,4 @@ module.exports = {
   getProduct,
   updateProduct,
   deleteProduct,
-  deleteAllProducts,
 };

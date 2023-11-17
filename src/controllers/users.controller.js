@@ -1,6 +1,6 @@
 const makeUsersService = require("../services/users.service");
 const ApiError = require("../api-error");
-const jwt = require("../common/_JVT");
+const jwt = require("../middlewares/_JVT");
 
 async function register(req, res, next) {
   if (!(req.body?.phone_number && req.body.password)) {
@@ -38,6 +38,7 @@ async function login(req, res, next) {
       id: contacts[0].id,
       phone_number: contacts[0].phone_number,
       fullname: contacts[0].fullname,
+      role_id: contacts[0].role_id,
     };
     const _token = await jwt.make(user_details);
     const responseData = {

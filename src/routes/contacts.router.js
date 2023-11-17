@@ -2,7 +2,7 @@ const express = require("express");
 const contactsController = require("../controllers/contacts.controller");
 const router = express.Router();
 const { methodNotAllowed } = require("../controllers/errors.controller");
-const _AuthMiddleWare = require("../common/_AuthMiddleWare");
+const _AuthMiddleWare = require("../middlewares/verifyToken");
 router
   .route("/")
   .get(contactsController.getContactsByFilter)

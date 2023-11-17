@@ -2,17 +2,20 @@ const express = require("express");
 const productsController = require("../controllers/products.controller");
 const router = express.Router();
 const { methodNotAllowed } = require("../controllers/errors.controller");
+const _AuthMiddleWare = require("../middlewares/verifyToken");
+const verifyRoles = require("../middlewares/verifyRoles");
+const uploadCloud = require("../middlewares/uploader");
+
 router
   .route("/")
   .get(productsController.getProductsByFilter)
-  .post(productsController.createProduct)
-  .delete(productsController.deleteAllProducts)
+  .post(uploadCloud.single("image"), productsController.createProduct)
   .all(methodNotAllowed);
 
 router
   .route("/:id")
   .get(productsController.getProduct)
-  .put(productsController.updateProduct)
+  .put(uploadCloud.single("image"), productsController.updateProduct)
   .delete(productsController.deleteProduct)
   .all(methodNotAllowed);
 
