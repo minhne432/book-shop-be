@@ -31,11 +31,8 @@ function makeUsersService() {
     const update = readUser(payload);
     return knex("users").where("id", id).update(update);
   }
-  async function deleteContact(id) {
-    return knex("users").where("id", id).del();
-  }
 
-  async function getUser(phone_number, password) {
+  async function login(phone_number, password) {
     return knex("users")
       .where("phone_number", phone_number)
       .andWhere("password", password)
@@ -47,9 +44,8 @@ function makeUsersService() {
   }
 
   return {
-    getUser,
+    login,
     updateContact,
-    deleteContact,
     createUser,
     getOne,
   };

@@ -25,7 +25,7 @@ async function register(req, res, next) {
 async function login(req, res, next) {
   try {
     const contactsService = makeUsersService();
-    const contacts = await contactsService.getUser(
+    const contacts = await contactsService.login(
       req.body.phone_number,
       req.body.password
     );
@@ -111,25 +111,9 @@ function deleteUser(req, res, next) {
   }
 }
 
-async function deleteAllUsers(req, res, next) {
-  try {
-    const contactService = makeUsersService();
-    const deleted = await contactService.deleteAllContacts();
-    return res.send({
-      message: `${deleted} contacts were deleted successfully!`,
-    });
-  } catch (error) {
-    console.log(error);
-    return next(
-      new ApiError(500, "An error occured while removing all contacts")
-    );
-  }
-}
-
 module.exports = {
   updateUsers,
   deleteUser,
-  deleteAllUsers,
   login,
   register,
   getOne,
