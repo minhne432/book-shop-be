@@ -9,14 +9,28 @@ const uploadCloud = require("../middlewares/uploader");
 router
   .route("/")
   .get(productsController.getProductsByFilter)
-  .post(uploadCloud.single("image"), productsController.createProduct)
+  .post(
+    _AuthMiddleWare.isAuth,
+    verifyRoles.isAdmin,
+    uploadCloud.single("image"),
+    productsController.createProduct
+  )
   .all(methodNotAllowed);
 
 router
   .route("/:id")
   .get(productsController.getProduct)
-  .put(uploadCloud.single("image"), productsController.updateProduct)
-  .delete(productsController.deleteProduct)
+  .put(
+    _AuthMiddleWare.isAuth,
+    verifyRoles.isAdmin,
+    uploadCloud.single("image"),
+    productsController.updateProduct
+  )
+  .delete(
+    _AuthMiddleWare.isAuth,
+    verifyRoles.isAdmin,
+    productsController.deleteProduct
+  )
   .all(methodNotAllowed);
 
 module.exports = router;
