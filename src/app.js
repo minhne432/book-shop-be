@@ -19,7 +19,7 @@ app.use(express.json());
 app.get("/checktoken", async (req, res) => {
   try {
     var _token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJpYXQiOjE3MDAxMDI1NjUsImV4cCI6MTcwMDEwNjE2NX0.Tau2eK0VOk761vvrmigZ_VFIsxANLqMLwrEzKBsMF2U";
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMTIyMzM0NCIsImlhdCI6MTcwMDE4NDY2MywiZXhwIjoxNzAwMTg4MjYzfQ.66LNA7I7bY9x0cgdABBBj-T_lS-K9-1gUzlrqZR1Fy8";
     const data = await jwt.check(_token);
     res.send({ data: data });
   } catch (err) {

@@ -35,9 +35,9 @@ async function login(req, res, next) {
     }
 
     const user_details = {
-      user_id: contacts[0].user_id,
+      id: contacts[0].id,
       phone_number: contacts[0].phone_number,
-      email: contacts[0].email,
+      fullname: contacts[0].fullname,
     };
     const _token = await jwt.make(user_details);
     const responseData = {
@@ -59,6 +59,19 @@ async function login(req, res, next) {
 async function getOne(req, res, next) {
   const userService = makeUsersService();
   const user_details = await userService.getOne(req.params.id);
+  if (user_details.length === 0) {
+    return next(new ApiError(404, "User not found!"));
+  }
+  return res.send(user_details);
+}
+async function getCurrent(req, res, next) {
+  console.log(req.auth);
+  const { id } = req.auth;
+  const userService = makeUsersService();
+  const user_details = await userService.getOne(id);
+  if (user_details.length === 0) {
+    return next(new ApiError(404, "User not found!"));
+  }
   return res.send(user_details);
 }
 
@@ -119,4 +132,5 @@ module.exports = {
   login,
   register,
   getOne,
+  getCurrent,
 };

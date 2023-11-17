@@ -1,3 +1,4 @@
+const ApiError = require("../api-error");
 let isAuth = async (req, res, next) => {
   var _token = req.headers.authorization;
   var jwt = require("./_JVT");
@@ -8,10 +9,10 @@ let isAuth = async (req, res, next) => {
       req.auth = authData;
       next();
     } catch (err) {
-      return res.send({ content: "Token is invalid!!!!!" });
+      return next(new ApiError(401, "Token is expired or invalid!!"));
     }
   } else {
-    return res.send({ content: "Token is invalid!!!!!" });
+    return next(new ApiError(401, "Unauthorized"));
   }
 };
 
