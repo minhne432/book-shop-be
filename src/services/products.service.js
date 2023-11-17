@@ -2,19 +2,18 @@ const Paginator = require("./paginator");
 const knex = require("../database/knex");
 function makeContactsService() {
   function readContact(payload) {
-    const contact = {
+    const products = {
+      id: payload.id,
       name: payload.name,
-      email: payload.email,
-      address: payload.address,
-      phone: payload.phone,
-      favorite: payload.favorite,
+      price: payload.price,
     };
     // Remove undefined fields
-    Object.keys(contact).forEach(
-      (key) => contact[key] === undefined && delete contact[key]
+    Object.keys(products).forEach(
+      (key) => products[key] === undefined && delete products[key]
     );
-    return contact;
+    return products;
   }
+
   async function createContact(payload) {
     const contact = readContact(payload);
     const [id] = await knex("contacts").insert(contact);
@@ -22,25 +21,14 @@ function makeContactsService() {
   }
 
   async function getManyContacts(query) {
-    const { name, favorite, page = 1, limit = 5 } = query;
+    const { page = 1, limit = 5 } = query;
     const paginator = new Paginator(page, limit);
-    let results = await knex("contacts")
-      .where((builder) => {
-        if (name) {
-          builder.where("name", "like", `%${name}%`);
-        }
-        if (favorite !== undefined) {
-          builder.where("favorite", 1);
-        }
-      })
+    let results = await knex("products")
       .select(
         knex.raw("count(id) OVER() AS recordsCount"),
         "id",
         "name",
-        "email",
-        "address",
-        "phone",
-        "favorite"
+        "price"
       )
       .limit(paginator.limit)
       .offset(paginator.offset);
