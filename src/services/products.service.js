@@ -88,7 +88,6 @@ function makeContactsService() {
   }
 
   async function updateProduct(id, payload, filedata) {
-    console.log(filedata);
     const update = readProduct(payload);
     if (filedata) {
       update.thumbnail = filedata.path;

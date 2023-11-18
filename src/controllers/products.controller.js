@@ -4,15 +4,17 @@ const cloudinary = require("cloudinary").v2;
 
 async function createProduct(req, res, next) {
   if (!req.body?.name) {
-    cloudinary.uploader.destroy(req.file.filename);
+    if (req.file != undefined) cloudinary.uploader.destroy(req.file.filename);
     return next(new ApiError(400, "Name can not be empty"));
   }
+  console.log("createProduct", req.file);
   try {
     const productsService = makeProductsService();
     const product = await productsService.createProduct(req.body, req.file);
+
     return res.send(product);
   } catch (error) {
-    cloudinary.uploader.destroy(req.file.filename);
+    if (req.file != undefined) cloudinary.uploader.destroy(req.file.filename);
     return next(
       new ApiError(500, "An error orrcured while creating the contact")
     );
@@ -36,7 +38,7 @@ async function getProductsByFilter(req, res, next) {
 async function getProduct(req, res, next) {
   try {
     const contactsService = makeProductsService();
-    const contact = await contactsService.getContactById(req.params.id);
+    const contact = await contactsService.getProductById(req.params.id);
     if (!contact) {
       return next(new ApiError(404, "Contact not found"));
     }
@@ -54,6 +56,7 @@ async function updateProduct(req, res, next) {
     if (req.file != undefined) cloudinary.uploader.destroy(req.file.filename);
     return next(new ApiError(400, "Data to update can not be empty"));
   }
+  console.log("updateProduct", req.file);
   try {
     const productsService = makeProductsService();
     const update = await productsService.updateProduct(
