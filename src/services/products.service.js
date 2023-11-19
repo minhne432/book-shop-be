@@ -18,7 +18,11 @@ function makeContactsService() {
 
   async function createProduct(payload, filedata) {
     let product = readProduct(payload);
-    product.thumbnail = filedata.path;
+    if (filedata != undefined) {
+      product.thumbnail = filedata.path;
+    } else {
+      product.thumbnail = "";
+    }
     const [id] = await knex("products").insert(product);
     return { id, ...product };
   }

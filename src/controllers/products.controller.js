@@ -7,7 +7,7 @@ async function createProduct(req, res, next) {
     if (req.file != undefined) cloudinary.uploader.destroy(req.file.filename);
     return next(new ApiError(400, "Name can not be empty"));
   }
-  console.log("createProduct", req.file);
+  console.log("createP controller", req.file);
   try {
     const productsService = makeProductsService();
     const product = await productsService.createProduct(req.body, req.file);
