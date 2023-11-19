@@ -34,6 +34,7 @@ function makeContactsService() {
           "products.name",
           "products.price",
           "products.thumbnail",
+          "products.description",
           "categories.name as categoryName"
         )
         .join("categories", "products.category_id", "categories.id")
@@ -60,6 +61,7 @@ function makeContactsService() {
         name: result.name,
         price: result.price,
         thumbnail: result.thumbnail,
+        description: result.description,
         categoryName: result.categoryName,
       }));
 
@@ -82,6 +84,7 @@ function makeContactsService() {
         "products.name",
         "products.price",
         "products.thumbnail",
+        "products.description",
         "categories.name as categoryName"
       )
       .first();

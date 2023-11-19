@@ -5,6 +5,7 @@ function makeUsersService() {
     const contact = {
       phone_number: payload.phone_number,
       password: payload.password,
+      fullname: payload.fullname,
     };
     // Remove undefined fields
     Object.keys(contact).forEach(
@@ -23,13 +24,9 @@ function makeUsersService() {
     }
     // Nếu không tồn tại, thêm người dùng mới vào cơ sở dữ liệu
     const user = readUser(payload);
+    console.log(user);
     const [id] = await knex("users").insert(user);
     return { id, ...user };
-  }
-
-  async function updateContact(id, payload) {
-    const update = readUser(payload);
-    return knex("users").where("id", id).update(update);
   }
 
   async function login(phone_number, password) {
@@ -45,7 +42,6 @@ function makeUsersService() {
 
   return {
     login,
-    updateContact,
     createUser,
     getOne,
   };

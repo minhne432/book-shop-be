@@ -43,8 +43,11 @@ async function login(req, res, next) {
     const _token = await jwt.make(user_details);
     const responseData = {
       id: contacts[0].id,
+      fullname: contacts[0].fullname,
       phone_number: contacts[0].phone_number,
       email: contacts[0].email,
+      role_id: contacts[0].role_id,
+      address: contacts[0].address,
       access_token: _token,
     };
 
