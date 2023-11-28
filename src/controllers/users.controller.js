@@ -79,44 +79,7 @@ async function getCurrent(req, res, next) {
   return res.send(user_details);
 }
 
-async function updateUsers(req, res, next) {
-  if (Object.keys(req.body).length === 0) {
-    return next(new ApiError(400, "Data to update can not be empty"));
-  }
-  try {
-    const contactService = makeUsersService();
-    const update = await contactService.updateContact(req.params.id, req.body);
-    if (!update) {
-      return next(new ApiError(404, "contact not found!"));
-    }
-    return res.send({ message: "contact was update successfully!" });
-  } catch (error) {
-    console.log(error);
-    return next(
-      new ApiError(500, `error updating contact with id=${req.params.id}`)
-    );
-  }
-}
-
-function deleteUser(req, res, next) {
-  try {
-    const contactService = makeUsersService();
-    const Delete = contactService.deleteContact(req.params.id);
-    if (!Delete) {
-      return next(new ApiError(404, "contact not found!"));
-    }
-    return res.send({ messate: "Contact was delete successfully!" });
-  } catch (error) {
-    console.log(error);
-    return next(
-      new ApiError(500, `could not delete contact with id=${req.params.id}`)
-    );
-  }
-}
-
 module.exports = {
-  updateUsers,
-  deleteUser,
   login,
   register,
   getOne,

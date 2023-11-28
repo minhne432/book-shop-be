@@ -1,9 +1,8 @@
 const express = require("express");
 const cors = require("cors");
-const contactsRouter = require("./routes/contacts.router");
 const productsRouter = require("./routes/products.router");
 const usersRouter = require("./routes/users.router");
-
+const ordersRouter = require("./routes/order.router");
 // add error handler middleware
 const {
   resourceNotFound,
@@ -19,11 +18,11 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to contactbook application." });
 });
 
-app.use("/api/contacts", contactsRouter);
-
 app.use("/api/products", productsRouter);
 
 app.use("/api/users", usersRouter);
+
+app.use("/api/orders", ordersRouter);
 
 // Handle 404 response
 app.use(resourceNotFound);

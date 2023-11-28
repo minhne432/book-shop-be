@@ -28,7 +28,7 @@ function makeContactsService() {
   }
 
   async function getManyProducts(query) {
-    const { category_id, page = 1, limit = 5 } = query;
+    const { category_id, page = 1, limit = 8 } = query;
     const paginator = new Paginator(page, limit);
 
     try {
