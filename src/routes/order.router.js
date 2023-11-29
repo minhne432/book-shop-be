@@ -8,4 +8,15 @@ router
   .post(ordersController.createCartItem)
   .all(methodNotAllowed);
 
+router
+  .route("/:user_id")
+  .get(ordersController.getCartByUserId)
+  .post(ordersController.createCartItem)
+  .all(methodNotAllowed);
+
+router
+  .route("/cart/:item_id")
+  .delete(ordersController.deleteCartItemByItemId)
+  .all(methodNotAllowed);
+
 module.exports = router;

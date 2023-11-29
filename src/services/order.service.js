@@ -51,8 +51,39 @@ function makeOrdersService() {
     return { message: "Thêm thành công vào giỏ hàng" };
   }
 
+  async function getCartItemsByUserId(userId) {
+    try {
+      const cartItems = await knex
+        .select(
+          "cart_items.item_id",
+          "products.name",
+          "products.price",
+          "products.thumbnail", // Thêm trường thumbnail vào câu truy vấn
+          "cart_items.quantity"
+        )
+        .from("cart_items")
+        .join("products", "cart_items.product_id", "=", "products.id")
+        .join("carts", "cart_items.cart_id", "=", "carts.cart_id")
+        .where("carts.user_id", userId);
+
+      return cartItems;
+    } catch (error) {
+      throw new Error("Error fetching cart items:", error);
+    }
+  }
+  async function deleteCartItemByItemId(itemId) {
+    try {
+      await knex("cart_items").where("item_id", itemId).del();
+
+      return { message: "Xóa thành công cart item" };
+    } catch (error) {
+      throw new Error("Error deleting cart item:", error);
+    }
+  }
   return {
     addToCart,
+    getCartItemsByUserId,
+    deleteCartItemByItemId,
   };
 }
 module.exports = makeOrdersService;
