@@ -2,10 +2,26 @@ const express = require("express");
 const router = express.Router();
 const { methodNotAllowed } = require("../controllers/errors.controller");
 const ordersController = require("../controllers/order.controller");
+
 router
   .route("/")
-  .get()
+
   .post(ordersController.createCartItem)
+  .all(methodNotAllowed);
+
+router
+  .route("/new")
+
+  .post(ordersController.createOrder)
+  .all(methodNotAllowed);
+
+router
+  .route("/getOrders/:user_id")
+  .get(ordersController.getOrdersByUserId)
+  .all(methodNotAllowed);
+router
+  .route("/getOrdersDetails/:id")
+  .get(ordersController.getOrderDetailsByOrderId)
   .all(methodNotAllowed);
 
 router

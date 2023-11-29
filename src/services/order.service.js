@@ -56,6 +56,7 @@ function makeOrdersService() {
       const cartItems = await knex
         .select(
           "cart_items.item_id",
+          "cart_items.product_id",
           "products.name",
           "products.price",
           "products.thumbnail", // Thêm trường thumbnail vào câu truy vấn
@@ -80,10 +81,90 @@ function makeOrdersService() {
       throw new Error("Error deleting cart item:", error);
     }
   }
+  //
+  async function createOrder(payload) {
+    try {
+      const { user_id, items, fullname, phone_number, address } = payload;
+
+      // Tính tổng giá trị của đơn hàng
+      const totalMoney = items.reduce((total, item) => {
+        return total + item.price * item.quantity;
+      }, 0);
+
+      await knex.transaction(async (trx) => {
+        const order = {
+          user_id,
+          fullname, // Thêm thông tin fullname vào đơn hàng
+          phone_number, // Thêm thông tin phone_number vào đơn hàng
+          address, // Thêm thông tin address vào đơn hàng
+          order_date: knex.raw("CURRENT_TIMESTAMP"),
+          status: "pending",
+          total_money: totalMoney,
+        };
+
+        const [orderId] = await trx("orders").insert(order).returning("id");
+
+        const orderDetails = items.map((item) => {
+          const { product_id, price, quantity } = item;
+          const totalMoneyPerItem = price * quantity;
+
+          return {
+            order_id: orderId,
+            product_id,
+            price,
+            number_of_products: quantity,
+            total_money: totalMoneyPerItem,
+          };
+        });
+
+        await trx("order_details").insert(orderDetails);
+      });
+
+      return { message: "Order created successfully!" };
+    } catch (error) {
+      return { error: error.message };
+    }
+  }
+
+  const getOrdersByUserId = async (user_id) => {
+    try {
+      const orders = await knex("orders")
+        .select("id", "fullname", "phone_number", "order_date", "status")
+        .where({ user_id });
+
+      return orders;
+    } catch (error) {
+      throw new Error(
+        `Error fetching orders for user ${user_id}: ${error.message}`
+      );
+    }
+  };
+
+  // Hàm lấy tất cả orderDetails dựa trên mã đơn hàng (order_id)
+  async function getOrderDetailsByOrderId(orderId) {
+    try {
+      const orderDetails = await knex("order_details")
+        .select(
+          "order_details.number_of_products",
+          "products.name",
+          "products.price"
+        )
+        .where({ order_id: orderId })
+        .join("products", "order_details.product_id", "products.id");
+
+      return orderDetails;
+    } catch (error) {
+      throw new Error(`Error fetching order details: ${error.message}`);
+    }
+  }
+
   return {
     addToCart,
     getCartItemsByUserId,
     deleteCartItemByItemId,
+    createOrder,
+    getOrdersByUserId,
+    getOrderDetailsByOrderId,
   };
 }
 module.exports = makeOrdersService;
