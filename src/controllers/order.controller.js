@@ -68,6 +68,27 @@ async function getOrderDetailsByOrderId(req, res, next) {
   }
 }
 
+async function getAllOrders(req, res, next) {
+  try {
+    const ordersSvervice = makeOrdersService();
+    const allOrders = await ordersSvervice.getAllOrders();
+    return res.send(allOrders);
+  } catch (err) {
+    return next(new ApiError(500, "An error orrcured while get cart"));
+  }
+}
+async function updateOrdertStatus(req, res, next) {
+  try {
+    const ordersSvervice = makeOrdersService();
+    const update = await ordersSvervice.updateOrdertStatus(
+      req.params.order_id,
+      req.body.status
+    );
+    return res.send(update);
+  } catch (err) {
+    return next(new ApiError(500, "An error orrcured while get cart"));
+  }
+}
 module.exports = {
   createCartItem,
   getCartByUserId,
@@ -75,4 +96,6 @@ module.exports = {
   createOrder,
   getOrdersByUserId,
   getOrderDetailsByOrderId,
+  getAllOrders,
+  updateOrdertStatus,
 };

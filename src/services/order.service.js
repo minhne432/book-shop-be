@@ -157,6 +157,27 @@ function makeOrdersService() {
       throw new Error(`Error fetching order details: ${error.message}`);
     }
   }
+  async function getAllOrders() {
+    try {
+      console.log("line 162 order.service");
+      const orders = await knex.select("*").from("orders");
+      console.log(orders);
+      return orders;
+    } catch (error) {
+      throw new Error(`Error fetching all orders: ${error.message}`);
+    }
+  }
+  async function updateOrdertStatus(order_id, newStatus) {
+    try {
+      await knex("orders").where({ id: order_id }).update({
+        status: newStatus,
+      });
+
+      return { message: "Order status updated successfully!" };
+    } catch (error) {
+      throw new Error(`Error updating order status: ${error.message}`);
+    }
+  }
 
   return {
     addToCart,
@@ -165,6 +186,8 @@ function makeOrdersService() {
     createOrder,
     getOrdersByUserId,
     getOrderDetailsByOrderId,
+    getAllOrders,
+    updateOrdertStatus,
   };
 }
 module.exports = makeOrdersService;

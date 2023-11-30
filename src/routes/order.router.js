@@ -35,4 +35,15 @@ router
   .delete(ordersController.deleteCartItemByItemId)
   .all(methodNotAllowed);
 
+router
+  .route("/admin/getAllOrders")
+  .get(ordersController.getAllOrders)
+  .put()
+  .all(methodNotAllowed);
+
+router
+  .route("/admin/getAllOrders/:order_id")
+  .put(ordersController.updateOrdertStatus)
+  .all(methodNotAllowed);
+
 module.exports = router;
